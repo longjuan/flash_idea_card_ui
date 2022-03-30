@@ -13,7 +13,7 @@
     <el-scrollbar always native>
       <div class="kanban-content">
         <kanban-column class="scrollbar-demo-item" v-for="item in contentInfo.columns" v-bind:key="item.columnId"
-                       v-bind:column="item" @refresh="refresh"/>
+                       v-bind:column="item" @refresh="refresh" v-bind:columnlist="contentInfo.columns"/>
         <add-column v-bind:kanban-id="contentInfo.baseInfo.kanbanId" @refresh="refresh"/>
       </div>
     </el-scrollbar>
@@ -48,7 +48,7 @@ export default {
     })
 
     const refresh = () => {
-      kanbanContent(route.params.kanbanId).then(response => {
+      return kanbanContent(route.params.kanbanId).then(response => {
         contentInfo.value = response.data
       })
     }
