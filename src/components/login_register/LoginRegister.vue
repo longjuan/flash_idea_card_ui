@@ -2,7 +2,7 @@
   <div class="info-form">
     <div v-if="mode === 1">
       <el-form label-width="90px">
-        <el-form-item label="用户名：">
+        <el-form-item label="邮&nbsp;&nbsp;&nbsp;&nbsp;箱：">
           <el-input name="username" v-model="loginData.username"></el-input>
         </el-form-item>
         <el-form-item label="密&nbsp;&nbsp;&nbsp;&nbsp;码：">
@@ -15,7 +15,7 @@
     </div>
     <div v-if="mode === 2">
       <el-form label-width="90px">
-        <el-form-item label="用户名：">
+        <el-form-item label="邮&nbsp;&nbsp;&nbsp;&nbsp;箱：">
           <el-input name="username" v-model="registerData.username"></el-input>
         </el-form-item>
         <el-form-item label="密&nbsp;&nbsp;&nbsp;&nbsp;码：">
@@ -66,10 +66,12 @@ export default {
       ensure_password: ""
     })
 
+    const email_regex = /^([a-zA-Z0-9]+[_|_|\-|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,6}$/;
+
     const register = () => {
-      if (registerData.username.length < 5 || registerData.username.length > 30) {
+      if ( !email_regex.test(registerData.username) ) {
         ElMessage({
-          message: "用户名长度应在5-30",
+          message: "邮箱错误",
           type: 'error'
         })
         return;

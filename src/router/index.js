@@ -5,6 +5,7 @@ const User = () => import('../views/user/User');
 const KanbanHome = () => import('../views/kanban/KanbanHome')
 const UserInfoSetting = () => import('../views/user/UserInfoSetting')
 const PasswordSetting = () => import('../views/user/PasswordSetting')
+const EmailSetting = () => import('../views/user/EmailSetting')
 const KanbanContent = ()=> import('../views/kanban/KanbanContent');
 const Refresh = ()=> import('../components/refresh');
 
@@ -47,6 +48,14 @@ const routes = [
             path: "password",
             name: "PasswordSetting",
             component: PasswordSetting,
+            meta: {
+              title: "闪念卡片-个人设置"
+            }
+          },
+          {
+            path: "email",
+            name: "EmailSetting",
+            component: EmailSetting,
             meta: {
               title: "闪念卡片-个人设置"
             }

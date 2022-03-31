@@ -25,3 +25,12 @@ export function updatePassword(data){
     data: qs.stringify(data)
   })
 }
+
+export function updateEmail(data){
+  return request({
+    url: "/api/user/email",
+    method: "put",
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    data: qs.stringify(data)
+  })
+}
