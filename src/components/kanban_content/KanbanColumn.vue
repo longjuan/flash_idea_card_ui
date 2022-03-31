@@ -37,6 +37,7 @@
       <kanban-card v-for="item in column.cards" v-bind:key="item.cardId" v-bind:card="item" @transform="transform"
                    @mouseover.stop="activeId=item.cardId" v-bind:active-id="activeId" @refresh="refresh"/>
       <add-card @refresh="refresh" v-bind:kid="column.kanbanId" v-bind:cid="column.columnId"/>
+      <div style="height: 30px;width: 100%"></div>
     </el-scrollbar>
 
     <el-dialog v-model="dialogTableVisible" title="卡片流转" append-to-body width="28%">
@@ -119,7 +120,7 @@ export default {
 
     }
 
-    const dialogTableVisible = ref(null)
+    const dialogTableVisible = ref(false)
 
     const transform = (cardId) => {
       transformTarget.value = prop.column.columnId

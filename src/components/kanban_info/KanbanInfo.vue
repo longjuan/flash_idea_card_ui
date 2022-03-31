@@ -23,7 +23,7 @@
                 <el-dropdown-menu>
                   <el-dropdown-item @click="update">修改看板信息</el-dropdown-item>
                   <el-dropdown-item @click="deleteKanban">删除该看板</el-dropdown-item>
-                  <el-dropdown-item divided>邀请协作</el-dropdown-item>
+                  <el-dropdown-item divided @click="invite">邀请协作</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -52,7 +52,7 @@
     >
       <el-form>
         <el-form-item label="看板标题">
-          <el-input v-model="thisInfo.title" autocomplete="off"/>
+          <el-input v-model="thisInfo.title" autocomplete="off" maxlength="60"/>
         </el-form-item>
         <el-form-item label="主题颜色">
           <el-color-picker v-model="thisInfo.color" size="large"/>
@@ -70,15 +70,17 @@
 <script>
 import {ref} from "vue";
 import {collectReq, deleteKanbanReq, updateKanban} from "@/network/kanban";
+import {ElMessage, ElMessageBox} from "element-plus";
+import {inviteReq} from "@/network/invitation";
 
 export default {
   name: "KanbanInfo",
   props: {
     info: Object
   },
-  setup(props,{emit}) {
+  setup(props, {emit}) {
     const shoucang = (b) => {
-      collectReq({kanbanId:props.info.kanbanId,isCollected:b}).then(()=>{
+      collectReq({kanbanId: props.info.kanbanId, isCollected: b}).then(() => {
         emit('refresh');
       })
     }
@@ -94,15 +96,29 @@ export default {
     }
 
     const commit = () => {
-      updateKanban(updateInfo.value).then(()=>{
+      updateKanban(updateInfo.value).then(() => {
         kanbaninfoVisible.value = false
         emit('refresh');
       })
     }
 
     const deleteKanban = () => {
-      deleteKanbanReq(props.info.kanbanId).then(()=>{
+      deleteKanbanReq(props.info.kanbanId).then(() => {
         emit('refresh');
+      })
+    }
+
+    const invite = () => {
+      ElMessageBox.prompt('请输入被邀请人的邮箱', 'Tip', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern:
+            /^([a-zA-Z0-9]+[_|_|\-|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,6}$/,
+        inputErrorMessage: '邮箱格式错误',
+      }).then(({value}) => {
+        return inviteReq({kanbanId:props.info.kanbanId,invitedUser:value})
+      }).then(()=>{
+        ElMessage.success("邀请成功")
       })
     }
 
@@ -114,6 +130,7 @@ export default {
       update,
       commit,
       deleteKanban,
+      invite
     }
   }
 }

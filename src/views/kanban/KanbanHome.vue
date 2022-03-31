@@ -42,7 +42,7 @@ export default {
       allKanban().then(response => {
         console.log(response);
         collected.value = response.data.filter(a => a.collected);
-        other.value = response.data.filter(a => !a.collected);
+        other.value = response.data;
         loading.value = false
       })
     }

@@ -1,5 +1,5 @@
 <template>
-  <div class="content-container">
+  <div class="content-container" v-loading="loading">
     <div class="kanban-info" :style="{'background-color':contentInfo.baseInfo.color+'90'}">
       <div style="margin-left: 30px;font-size: 18px;font-weight: bold;">{{ contentInfo.baseInfo.title }}</div>
       <div style="margin-left: 20px;margin-right: 20px;"><span
@@ -22,7 +22,7 @@
 
 <script>
 import KanbanColumn from "@/components/kanban_content/KanbanColumn";
-import {onMounted, ref} from "vue";
+import {onBeforeUnmount, onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import router from "@/router";
 import {kanbanContent} from "@/network/kanban";
@@ -40,22 +40,48 @@ export default {
     })
 
     onMounted(() => {
+      loading.value = true
       if (route.params.kanbanId) {
-        refresh()
+        refresh().then(()=>{
+          loading.value = false
+        })
       } else {
         router.push({path: "/home"})
       }
     })
 
+    onBeforeUnmount(()=>{
+      if (interval !== null){
+        clearInterval(interval)
+        console.log('beforeDestroy clear interval:' + interval)
+      }
+    })
+
+    let interval = null;
+
     const refresh = () => {
       return kanbanContent(route.params.kanbanId).then(response => {
         contentInfo.value = response.data
+        if (response.data.cooperating){
+          if (interval === null){
+            interval = setInterval(refresh, 8000)
+            console.log('start interval:' + interval)
+          }
+        }else{
+          if (interval !== null){
+            clearInterval(interval)
+            console.log('stop interval:' + interval)
+          }
+        }
       })
     }
 
+    const loading = ref(false)
+
     return {
       contentInfo,
-      refresh
+      refresh,
+      loading
     }
   }
 }
