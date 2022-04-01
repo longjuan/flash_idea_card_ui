@@ -53,24 +53,38 @@ export default {
     onBeforeUnmount(()=>{
       if (interval !== null){
         clearInterval(interval)
+        millisecondNum = -1
         console.log('beforeDestroy clear interval:' + interval)
       }
     })
 
     let interval = null;
+    let millisecondNum = -1;
 
     const refresh = () => {
       return kanbanContent(route.params.kanbanId).then(response => {
         contentInfo.value = response.data
         if (response.data.cooperating){
-          if (interval === null){
+          if (millisecondNum !== 8000){
+            if (interval !== null){
+              console.log('stop interval:' + interval)
+              clearInterval(interval)
+              interval = null
+            }
             interval = setInterval(refresh, 8000)
-            console.log('start interval:' + interval)
+            millisecondNum = 8000
+            console.log(`start interval:${interval}, millisecondNum:${millisecondNum}`)
           }
         }else{
-          if (interval !== null){
-            clearInterval(interval)
-            console.log('stop interval:' + interval)
+          if (millisecondNum !== 60000){
+            if (interval !== null){
+              console.log('stop interval:' + interval)
+              clearInterval(interval)
+              interval = null
+            }
+            interval = setInterval(refresh, 60000)
+            millisecondNum = 60000
+            console.log(`start interval:${interval}, millisecondNum:${millisecondNum}`)
           }
         }
       })
