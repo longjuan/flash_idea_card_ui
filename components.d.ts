@@ -7,6 +7,7 @@ declare module 'vue' {
     AddCard: typeof import('./src/components/kanban_content/AddCard.vue')['default']
     AddColumn: typeof import('./src/components/kanban_content/AddColumn.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
+    ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBadge: typeof import('element-plus/es')['ElBadge']
     ElButton: typeof import('element-plus/es')['ElButton']

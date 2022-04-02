@@ -7,17 +7,31 @@
       </el-tooltip>
       <el-divider direction="vertical" style="height: 100%;margin-left: 15px;margin-right: 15px;"/>
       <div class="mt-4">
-        <el-input
+        <el-autocomplete
             v-model="searchInput"
-            placeholder="内存不够，暂不上线搜索功能"
-            class="input-with-select"
+            placeholder="搜索功能可能不开放，服务器内存不够"
+            style="min-width: 320px;"
+            :fetch-suggestions="querySearch"
         >
           <template #append>
             <el-button>
               <span class="iconfont icon-search"></span>
             </el-button>
           </template>
-        </el-input>
+
+          <template #default="{ item }">
+            <div @click="$router.push({path:'/kanban/'+item.kanbanId})">
+              <div>
+                <el-tag v-if="item.type === 'kanban'">看板</el-tag>
+                <el-tag type="success" v-else-if="item.type === 'column'">列</el-tag>
+                <el-tag type="info" v-else-if="item.type === 'card'">卡片</el-tag>
+                <el-tag type="warning" v-else-if="item.type === 'tag'">Tag</el-tag>
+                <el-tag type="info" effect="dark" style="margin-left: 10px;">点击前往</el-tag>
+              </div>
+              <div class="value">{{ item.content }}</div>
+            </div>
+          </template>
+        </el-autocomplete>
       </div>
     </div>
     <div class="header-bar-right">
@@ -84,6 +98,7 @@ import store from "@/store";
 import {testToken} from "@/network/global";
 import {addKanban} from "@/network/kanban";
 import {getInvitationReq} from "@/network/invitation";
+import {searchReq} from "@/network/search";
 
 export default {
   name: "HeaderBar",
@@ -120,6 +135,12 @@ export default {
       })
     }
 
+    const querySearch = (queryString, cb)=>{
+      searchReq(queryString).then(result=>{
+        cb(result.data)
+      })
+    }
+
     return {
       logoImg,
       searchInput,
@@ -127,7 +148,8 @@ export default {
       newKanbanShow,
       newkanban,
       commit,
-      invitationNum
+      invitationNum,
+      querySearch
     }
   }
 }
@@ -155,5 +177,12 @@ export default {
   height: 35px;
   margin-top: 10px;
   align-items: center;
+}
+.value{
+  max-width: 800px;
+  overflow: hidden;
+  white-space: normal;
+  word-break: break-all;
+  line-height: 160%;
 }
 </style>
