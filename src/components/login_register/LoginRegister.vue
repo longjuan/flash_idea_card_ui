@@ -10,7 +10,7 @@
         </el-form-item>
         <el-button type="primary" style="width: 100%; margin-top: 5px;" @click="login">登录</el-button>
       </el-form>
-      <el-button type="success" style="width: 100%; margin-top: 13px;">免登陆试用</el-button>
+      <el-button type="success" style="width: 100%; margin-top: 13px;" @click="message">免登陆试用</el-button>
       <el-button type="text" style="margin-top: 8px; float: right;" @click="switch_mode(2)">去注册</el-button>
     </div>
     <div v-if="mode === 2">
@@ -120,13 +120,18 @@ export default {
       })
     }
 
+    const message = ()=>{
+      ElMessage.error("暂不开放免注册试用，请前往注册后使用")
+    }
+
     return {
       mode,
       switch_mode,
       loginData,
       registerData,
       register,
-      login
+      login,
+      message
     }
   }
 }
