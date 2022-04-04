@@ -5,8 +5,10 @@ const User = () => import('../views/user/User');
 const KanbanHome = () => import('../views/kanban/KanbanHome')
 const UserInfoSetting = () => import('../views/user/UserInfoSetting')
 const PasswordSetting = () => import('../views/user/PasswordSetting')
+const EmailSetting = () => import('../views/user/EmailSetting')
 const KanbanContent = ()=> import('../views/kanban/KanbanContent');
 const Refresh = ()=> import('../components/refresh');
+const Invitation = ()=> import('../views/Invitation');
 
 const routes = [
   {
@@ -31,6 +33,14 @@ const routes = [
         }
       },
       {
+        path: "invitation",
+        name: 'Invitation',
+        component: Invitation,
+        meta: {
+          title: "闪念卡片-协作邀请"
+        }
+      },
+      {
         path: "/user",
         name: "User",
         component: User,
@@ -48,7 +58,15 @@ const routes = [
             name: "PasswordSetting",
             component: PasswordSetting,
             meta: {
-              title: "闪念卡片-个人设置"
+              title: "闪念卡片-密码设置"
+            }
+          },
+          {
+            path: "email",
+            name: "EmailSetting",
+            component: EmailSetting,
+            meta: {
+              title: "闪念卡片-邮箱设置"
             }
           }
         ]
@@ -88,8 +106,16 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to)=>{
+router.beforeEach((to,from,next)=>{
+  if (to.path !== "/"){
+    if (!localStorage.getItem("access_token")){
+      console.log(111);
+      next({path:"/"})
+      return
+    }
+  }
   document.title = to.meta.title;
+  next()
 })
 
 export default router

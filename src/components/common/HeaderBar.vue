@@ -7,17 +7,31 @@
       </el-tooltip>
       <el-divider direction="vertical" style="height: 100%;margin-left: 15px;margin-right: 15px;"/>
       <div class="mt-4">
-        <el-input
+        <el-autocomplete
             v-model="searchInput"
-            placeholder="内存不够，暂不上线搜索功能"
-            class="input-with-select"
+            placeholder="搜索功能可能不开放，服务器内存不够"
+            style="min-width: 320px;"
+            :fetch-suggestions="querySearch"
         >
           <template #append>
             <el-button>
               <span class="iconfont icon-search"></span>
             </el-button>
           </template>
-        </el-input>
+
+          <template #default="{ item }">
+            <div @click="$router.push({path:'/kanban/'+item.kanbanId})">
+              <div>
+                <el-tag v-if="item.type === 'kanban'">看板</el-tag>
+                <el-tag type="success" v-else-if="item.type === 'column'">列</el-tag>
+                <el-tag type="info" v-else-if="item.type === 'card'">卡片</el-tag>
+                <el-tag type="warning" v-else-if="item.type === 'tag'">Tag</el-tag>
+                <el-tag type="info" effect="dark" style="margin-left: 10px;">点击前往</el-tag>
+              </div>
+              <div class="value">{{ item.content }}</div>
+            </div>
+          </template>
+        </el-autocomplete>
       </div>
     </div>
     <div class="header-bar-right">
@@ -33,8 +47,15 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
+      <el-tooltip content="协作邀请" effect="light">
+        <el-button style="margin-left: 10px;margin-right: 30px;color: #222" @click="$router.push({path:'/home/invitation'})" type="text">
+          <el-badge :value="invitationNum" type="primary" :hidden="invitationNum<=0">
+            <span class="iconfont icon-yaoqing" style="font-size: 25px;"></span>
+          </el-badge>
+        </el-button>
+      </el-tooltip>
       <el-tooltip content="创建新看板" effect="light">
-        <el-button style="margin-left: 10px;margin-right: 20px;color: #fa8771" @click="newKanbanShow=true">
+        <el-button style="margin-left: 10px;margin-right: 30px;color: #fa8771" @click="newKanbanShow=true">
           <span class="iconfont icon-zengjia" style="font-size: 25px;"></span>
         </el-button>
       </el-tooltip>
@@ -48,7 +69,7 @@
     >
       <el-form>
         <el-form-item label="看板标题">
-          <el-input v-model="newkanban.title" autocomplete="off"/>
+          <el-input v-model="newkanban.title" autocomplete="off" maxlength="60"/>
         </el-form-item>
         <el-form-item label="主题颜色">
           <el-color-picker v-model="newkanban.color" size="large"/>
@@ -76,6 +97,8 @@ import {userInfoReq} from "@/network/user";
 import store from "@/store";
 import {testToken} from "@/network/global";
 import {addKanban} from "@/network/kanban";
+import {getInvitationReq} from "@/network/invitation";
+import {searchReq} from "@/network/search";
 
 export default {
   name: "HeaderBar",
@@ -85,8 +108,12 @@ export default {
       userInfoReq().then(response => {
         store.dispatch('modifyUserInfo', response.data)
       })
+      getInvitationReq().then(response=>{
+        invitationNum.value = response.data.filter(item => item.state === 1).length
+      })
     })
-
+    
+    const invitationNum = ref(0)
     const searchInput = ref("");
 
     const logout = () => {
@@ -102,9 +129,15 @@ export default {
     const commit = () => {
       addKanban(newkanban.value).then(() => {
         newKanbanShow.value = false
-        router.push({path:"/home"}).then(()=>{
+        router.push({path: "/home"}).then(() => {
           router.replace({path: "/refresh"})
         })
+      })
+    }
+
+    const querySearch = (queryString, cb)=>{
+      searchReq(queryString).then(result=>{
+        cb(result.data)
       })
     }
 
@@ -114,7 +147,9 @@ export default {
       logout,
       newKanbanShow,
       newkanban,
-      commit
+      commit,
+      invitationNum,
+      querySearch
     }
   }
 }
@@ -142,5 +177,12 @@ export default {
   height: 35px;
   margin-top: 10px;
   align-items: center;
+}
+.value{
+  max-width: 800px;
+  overflow: hidden;
+  white-space: normal;
+  word-break: break-all;
+  line-height: 160%;
 }
 </style>

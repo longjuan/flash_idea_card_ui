@@ -1,4 +1,5 @@
 import {request} from "@/network/request";
+import qs from "qs";
 
 export function addColumnReq(data) {
   return request({
@@ -15,3 +16,19 @@ export function deleteColumnReq(data) {
   })
 }
 
+export function moveReq(data){
+  return request({
+    url: "/api/kanban/column/order",
+    method: "put",
+    data: qs.stringify(data),
+    headers: { 'content-type': 'application/x-www-form-urlencoded' }
+  })
+}
+
+export function updateColumn(data) {
+  return request({
+    url: "/api/kanban/column",
+    method: "put",
+    data
+  })
+}

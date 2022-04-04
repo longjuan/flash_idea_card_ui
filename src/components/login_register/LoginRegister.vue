@@ -2,7 +2,7 @@
   <div class="info-form">
     <div v-if="mode === 1">
       <el-form label-width="90px">
-        <el-form-item label="用户名：">
+        <el-form-item label="邮&nbsp;&nbsp;&nbsp;&nbsp;箱：">
           <el-input name="username" v-model="loginData.username"></el-input>
         </el-form-item>
         <el-form-item label="密&nbsp;&nbsp;&nbsp;&nbsp;码：">
@@ -10,12 +10,12 @@
         </el-form-item>
         <el-button type="primary" style="width: 100%; margin-top: 5px;" @click="login">登录</el-button>
       </el-form>
-      <el-button type="success" style="width: 100%; margin-top: 13px;">免登陆试用</el-button>
+      <el-button type="success" style="width: 100%; margin-top: 13px;" @click="message">免登陆试用</el-button>
       <el-button type="text" style="margin-top: 8px; float: right;" @click="switch_mode(2)">去注册</el-button>
     </div>
     <div v-if="mode === 2">
       <el-form label-width="90px">
-        <el-form-item label="用户名：">
+        <el-form-item label="邮&nbsp;&nbsp;&nbsp;&nbsp;箱：">
           <el-input name="username" v-model="registerData.username"></el-input>
         </el-form-item>
         <el-form-item label="密&nbsp;&nbsp;&nbsp;&nbsp;码：">
@@ -66,10 +66,12 @@ export default {
       ensure_password: ""
     })
 
+    const email_regex = /^([a-zA-Z0-9]+[_|_|\-|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,6}$/;
+
     const register = () => {
-      if (registerData.username.length < 5 || registerData.username.length > 30) {
+      if ( !email_regex.test(registerData.username) ) {
         ElMessage({
-          message: "用户名长度应在5-30",
+          message: "邮箱错误",
           type: 'error'
         })
         return;
@@ -97,9 +99,9 @@ export default {
     }
 
     const login = () => {
-      if (loginData.username.length < 5 || loginData.username.length > 30) {
+      if (!email_regex.test(loginData.username)) {
         ElMessage({
-          message: "用户名长度应在5-30",
+          message: "邮箱错误",
           type: 'error'
         })
         return;
@@ -118,13 +120,18 @@ export default {
       })
     }
 
+    const message = ()=>{
+      ElMessage.error("暂不开放免注册试用，请前往注册后使用")
+    }
+
     return {
       mode,
       switch_mode,
       loginData,
       registerData,
       register,
-      login
+      login,
+      message
     }
   }
 }

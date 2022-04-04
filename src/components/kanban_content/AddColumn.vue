@@ -5,8 +5,8 @@
     </div>
     <div v-if="addVisible">
       <el-input type="textarea" style="width: 100%" placeholder="请输入列表名称" v-model="ctitle"></el-input>
-      <el-button type="primary" @click="addColumn">添加</el-button>
-      <el-button @click="addVisible=false">取消</el-button>
+      <el-button type="primary" @click="addColumn" style="margin-top: 5px;">添加</el-button>
+      <el-button @click="addVisible=false" style="margin-top: 5px;">取消</el-button>
     </div>
   </div>
 </template>

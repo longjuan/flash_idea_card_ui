@@ -2,19 +2,33 @@ const {defineConfig} = require('@vue/cli-service')
 const AutoImport = require('unplugin-auto-import/webpack')
 const Components = require('unplugin-vue-components/webpack')
 const {ElementPlusResolver} = require('unplugin-vue-components/resolvers')
+const CompressionWebpackPlugin = require('compression-webpack-plugin')
 module.exports = defineConfig({
   transpileDependencies: true,
+  productionSourceMap: false,
   devServer: {
     proxy: {
       "/api": {
-        target: "http://localhost:9201",
+        target: "https://ficc.zway.top/",
         changeOrigin: true,
         ws: true,
         pathRewrite: {
-          '^/api': '/'
+          '^/api': '/api'
         },
       }
     }
+  },
+  configureWebpack: config => {
+    // 开发环境不需要gzip
+    if (process.env.NODE_ENV !== 'production') return
+    config.plugins.push(
+      new CompressionWebpackPlugin({
+        algorithm: 'gzip',
+        test: /\.(js|css)$/,// 匹配文件名
+        threshold: 5120, // 对超过10k的数据压缩
+        deleteOriginalAssets: false // 不删除源文件
+      })
+    )
   },
   chainWebpack: (config) => {
     config

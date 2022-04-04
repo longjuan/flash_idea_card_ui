@@ -21,6 +21,6 @@ export default {
   height: 100%;
 }
 .el-main{
-  padding: 0 0 0px;
+  padding: 0 0 0 !important;
 }
 </style>

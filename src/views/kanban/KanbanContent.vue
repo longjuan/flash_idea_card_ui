@@ -1,5 +1,5 @@
 <template>
-  <div class="content-container">
+  <div class="content-container" v-loading="loading">
     <div class="kanban-info" :style="{'background-color':contentInfo.baseInfo.color+'90'}">
       <div style="margin-left: 30px;font-size: 18px;font-weight: bold;">{{ contentInfo.baseInfo.title }}</div>
       <div style="margin-left: 20px;margin-right: 20px;"><span
@@ -13,7 +13,7 @@
     <el-scrollbar always native>
       <div class="kanban-content">
         <kanban-column class="scrollbar-demo-item" v-for="item in contentInfo.columns" v-bind:key="item.columnId"
-                       v-bind:column="item" @refresh="refresh"/>
+                       v-bind:column="item" @refresh="refresh" v-bind:columnlist="contentInfo.columns"/>
         <add-column v-bind:kanban-id="contentInfo.baseInfo.kanbanId" @refresh="refresh"/>
       </div>
     </el-scrollbar>
@@ -22,7 +22,7 @@
 
 <script>
 import KanbanColumn from "@/components/kanban_content/KanbanColumn";
-import {onMounted, ref} from "vue";
+import {onBeforeUnmount, onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import router from "@/router";
 import {kanbanContent} from "@/network/kanban";
@@ -40,22 +40,62 @@ export default {
     })
 
     onMounted(() => {
+      loading.value = true
       if (route.params.kanbanId) {
-        refresh()
+        refresh().then(()=>{
+          loading.value = false
+        })
       } else {
         router.push({path: "/home"})
       }
     })
 
+    onBeforeUnmount(()=>{
+      if (interval !== null){
+        clearInterval(interval)
+        millisecondNum = -1
+        console.log('beforeDestroy clear interval:' + interval)
+      }
+    })
+
+    let interval = null;
+    let millisecondNum = -1;
+
     const refresh = () => {
-      kanbanContent(route.params.kanbanId).then(response => {
+      return kanbanContent(route.params.kanbanId).then(response => {
         contentInfo.value = response.data
+        if (response.data.cooperating){
+          if (millisecondNum !== 8000){
+            if (interval !== null){
+              console.log('stop interval:' + interval)
+              clearInterval(interval)
+              interval = null
+            }
+            interval = setInterval(refresh, 8000)
+            millisecondNum = 8000
+            console.log(`start interval:${interval}, millisecondNum:${millisecondNum}`)
+          }
+        }else{
+          if (millisecondNum !== 60000){
+            if (interval !== null){
+              console.log('stop interval:' + interval)
+              clearInterval(interval)
+              interval = null
+            }
+            interval = setInterval(refresh, 60000)
+            millisecondNum = 60000
+            console.log(`start interval:${interval}, millisecondNum:${millisecondNum}`)
+          }
+        }
       })
     }
 
+    const loading = ref(false)
+
     return {
       contentInfo,
-      refresh
+      refresh,
+      loading
     }
   }
 }

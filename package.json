@@ -10,6 +10,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^1.1.4",
     "axios": "^0.26.1",
+    "compression-webpack-plugin": "^9.2.0",
     "core-js": "^3.8.3",
     "element-plus": "^2.1.4",
     "qs": "^6.10.3",
