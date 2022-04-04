@@ -106,8 +106,16 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to)=>{
+router.beforeEach((to,from,next)=>{
+  if (to.path !== "/"){
+    if (!localStorage.getItem("access_token")){
+      console.log(111);
+      next({path:"/"})
+      return
+    }
+  }
   document.title = to.meta.title;
+  next()
 })
 
 export default router

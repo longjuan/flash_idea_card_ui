@@ -99,9 +99,9 @@ export default {
     }
 
     const login = () => {
-      if (loginData.username.length < 5 || loginData.username.length > 30) {
+      if (!email_regex.test(loginData.username)) {
         ElMessage({
-          message: "用户名长度应在5-30",
+          message: "邮箱错误",
           type: 'error'
         })
         return;
