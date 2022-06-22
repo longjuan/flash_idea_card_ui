@@ -65,25 +65,25 @@ export default {
       return kanbanContent(route.params.kanbanId).then(response => {
         contentInfo.value = response.data
         if (response.data.cooperating){
-          if (millisecondNum !== 8000){
+          if (millisecondNum !== 5000){
             if (interval !== null){
               console.log('stop interval:' + interval)
               clearInterval(interval)
               interval = null
             }
-            interval = setInterval(refresh, 8000)
-            millisecondNum = 8000
+            interval = setInterval(refresh, 5000)
+            millisecondNum = 5000
             console.log(`start interval:${interval}, millisecondNum:${millisecondNum}`)
           }
         }else{
-          if (millisecondNum !== 60000){
+          if (millisecondNum !== 45000){
             if (interval !== null){
               console.log('stop interval:' + interval)
               clearInterval(interval)
               interval = null
             }
-            interval = setInterval(refresh, 60000)
-            millisecondNum = 60000
+            interval = setInterval(refresh, 45000)
+            millisecondNum = 45000
             console.log(`start interval:${interval}, millisecondNum:${millisecondNum}`)
           }
         }
