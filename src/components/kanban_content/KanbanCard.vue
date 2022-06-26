@@ -26,7 +26,7 @@
           </template>
         </el-dropdown>
       </div>
-      <span>{{ card.content }}</span>
+      <span style="display: block;white-space: pre-wrap;text-align: left;">{{ card.content }}</span>
       <div style="margin-top: 10px;" v-if="card.tags.length !== 0">
         <el-tag v-for="item in card.tags" v-bind:key="item.tagId" :color="item.color" effect="plain">
           {{ item.content }}
@@ -46,12 +46,13 @@
       />
       <div style="margin-top: 10px;">
         <el-tag closable v-for="item in card.tags" v-bind:key="item.tagId" :color="item.color" effect="plain"
-                @close="doclose(item.tagId)" class="tags" :class="{'uptoline': newtaginfo.content.length === 0}">
+                @close="doclose(item.tagId)" class="tags">
           {{ item.content }}
         </el-tag>
-        <el-button size="small" class="tags" @click="newtag=true" style="margin-left: 10px;" v-if="!newtag">+New Tag
+        <br/> <br/>
+        <el-button size="small" class="tags" @click="newtag=true" v-if="!newtag">+New Tag
         </el-button>
-        <el-input size="small" style="width: 150px;margin-left: 10px;" v-if="newtag" placeholder="tag内容，右边选择颜色"
+        <el-input size="small" style="width: 150px;" v-if="newtag" placeholder="tag内容，右边选择颜色"
                   maxlength="10" v-model="newtaginfo.content"/>
         <el-color-picker v-model="newtaginfo.color" size="small" class="tags" v-if="newtag"/>
         <el-button size="small" class="tags" @click="addTag" v-if="newtag">确定</el-button>
@@ -179,10 +180,6 @@ export default {
 
 .tags {
   margin-right: 5px;
-}
-
-.uptoline {
-  margin-top: -2px;
 }
 
 .card-el:hover {

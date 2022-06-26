@@ -43,6 +43,7 @@ declare module 'vue' {
     KanbanInfo: typeof import('./src/components/kanban_info/KanbanInfo.vue')['default']
     Loading: typeof import('element-plus/es')['ElLoadingDirective']
     LoginRegister: typeof import('./src/components/login_register/LoginRegister.vue')['default']
+    Recaptcha: typeof import('./src/components/recaptcha.vue')['default']
     Refresh: typeof import('./src/components/refresh.vue')['default']
   }
 }

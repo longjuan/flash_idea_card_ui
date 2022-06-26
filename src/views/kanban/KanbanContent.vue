@@ -61,29 +61,32 @@ export default {
     let interval = null;
     let millisecondNum = -1;
 
+    const COOPERATING = 5000;
+    const OUT_OF_COOPERATION = 30000;
+
     const refresh = () => {
       return kanbanContent(route.params.kanbanId).then(response => {
         contentInfo.value = response.data
         if (response.data.cooperating){
-          if (millisecondNum !== 5000){
+          if (millisecondNum !== COOPERATING){
             if (interval !== null){
               console.log('stop interval:' + interval)
               clearInterval(interval)
               interval = null
             }
-            interval = setInterval(refresh, 5000)
-            millisecondNum = 5000
+            interval = setInterval(refresh, COOPERATING)
+            millisecondNum = COOPERATING
             console.log(`start interval:${interval}, millisecondNum:${millisecondNum}`)
           }
         }else{
-          if (millisecondNum !== 45000){
+          if (millisecondNum !== OUT_OF_COOPERATION){
             if (interval !== null){
               console.log('stop interval:' + interval)
               clearInterval(interval)
               interval = null
             }
-            interval = setInterval(refresh, 45000)
-            millisecondNum = 45000
+            interval = setInterval(refresh, OUT_OF_COOPERATION)
+            millisecondNum = OUT_OF_COOPERATION
             console.log(`start interval:${interval}, millisecondNum:${millisecondNum}`)
           }
         }
