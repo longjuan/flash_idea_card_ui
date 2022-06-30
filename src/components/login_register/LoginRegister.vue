@@ -43,8 +43,6 @@ import {ElMessage} from "element-plus";
 import {loginReq, registerReq} from "@/network/login_register";
 import {testToken} from "@/network/global";
 import router from "@/router";
-import {getRsaKey} from "@/network/rsa";
-import JSEncrypt from "jsencrypt";
 import recaptcha from "@/components/recaptcha";
 
 export default {
@@ -116,25 +114,17 @@ export default {
         return;
       }
 
-      getRsaKey().then(response => {
-        let encryptor = new JSEncrypt()
-        encryptor.setPublicKey("-----BEGIN PUBLIC KEY-----" + response.data.publicKey + "-----END PUBLIC KEY-----")
-        let rsaPassWord = encryptor.encrypt(registerData.password)
-
-        return registerReq({
-          username: registerData.username, password: rsaPassWord, captcha: captcha, rsaUuid: response.data.uuid
+      registerReq({
+        username: registerData.username, password: registerData.password, captcha: captcha
+      }).then(() => {
+        loginData.username = registerData.username
+        loginData.password = registerData.password
+        ElMessage({
+          message: "注册成功",
+          type: 'success'
         })
-
+        mode.value = 1
       })
-          .then(() => {
-            loginData.username = registerData.username
-            loginData.password = registerData.password
-            ElMessage({
-              message: "注册成功",
-              type: 'success'
-            })
-            mode.value = 1
-          })
     }
 
     const login = () => {
@@ -159,16 +149,10 @@ export default {
         })
         return;
       }
-      getRsaKey().then(response => {
-        let encryptor = new JSEncrypt()
-        encryptor.setPublicKey("-----BEGIN PUBLIC KEY-----" + response.data.publicKey + "-----END PUBLIC KEY-----")
-        let rsaPassWord = encryptor.encrypt(loginData.password)
 
-        return loginReq({
-          username: loginData.username, password: rsaPassWord,
-          captcha: captcha, rsa_uuid: response.data.uuid
-        })
-
+      return loginReq({
+        username: loginData.username, password: loginData.password,
+        captcha: captcha
       }).then(response => {
         localStorage.setItem("access_token", response.data.access_token)
         localStorage.setItem("refresh_token", response.data.refresh_token)
