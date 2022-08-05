@@ -41,7 +41,7 @@ export default {
         })
         return;
       }
-      updatePassword({oldpw: passwordData.oldpw, newpd: passwordData.newpw}).then(() => {
+      updatePassword({oldpw: passwordData.oldpw, newpw: passwordData.newpw}).then(() => {
           ElMessage({
             message: "修改成功",
             type: 'success'

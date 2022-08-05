@@ -54,38 +54,8 @@
           </el-badge>
         </el-button>
       </el-tooltip>
-      <el-tooltip content="创建新看板" effect="light">
-        <el-button style="margin-left: 10px;margin-right: 30px;color: #fa8771" @click="newKanbanShow=true">
-          <span class="iconfont icon-zengjia" style="font-size: 25px;"></span>
-        </el-button>
-      </el-tooltip>
     </div>
 
-    <el-dialog
-        v-model="newKanbanShow"
-        title="新建看板"
-        width="30%"
-        :append-to-body="true"
-    >
-      <el-form>
-        <el-form-item label="看板标题">
-          <el-input v-model="newkanban.title" autocomplete="off" maxlength="60"/>
-        </el-form-item>
-        <el-form-item label="主题颜色">
-          <el-color-picker v-model="newkanban.color" size="large"/>
-        </el-form-item>
-        <el-form-item label="看板类型">
-          <el-select v-model="newkanban.type" placeholder="Select">
-            <el-option label="默认类型" :value="1"/>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-      <span class="dialog-footer">
-        <el-button type="primary" @click="commit">确定</el-button>
-      </span>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -96,7 +66,6 @@ import router from "@/router";
 import {userInfoReq} from "@/network/user";
 import store from "@/store";
 import {testToken} from "@/network/global";
-import {addKanban} from "@/network/kanban";
 import {getInvitationReq} from "@/network/invitation";
 import {searchReq} from "@/network/search";
 
@@ -122,19 +91,6 @@ export default {
       router.push({path: "/"})
     }
 
-    const newKanbanShow = ref(false)
-
-    const newkanban = ref({title: "", color: '#' + Math.random().toString(16).substr(-6), type: 1})
-
-    const commit = () => {
-      addKanban(newkanban.value).then(() => {
-        newKanbanShow.value = false
-        router.push({path: "/home"}).then(() => {
-          router.replace({path: "/refresh"})
-        })
-      })
-    }
-
     const querySearch = (queryString, cb)=>{
       searchReq(queryString).then(result=>{
         cb(result.data)
@@ -145,9 +101,6 @@ export default {
       logoImg,
       searchInput,
       logout,
-      newKanbanShow,
-      newkanban,
-      commit,
       invitationNum,
       querySearch
     }

@@ -20,10 +20,13 @@
             <el-dropdown>
               <span class="iconfont icon-gengduo-shuxiang more-icon"></span>
               <template #dropdown>
-                <el-dropdown-menu>
+                <el-dropdown-menu v-if="info.ownerId === $store.state.userInfo.userid">
                   <el-dropdown-item @click="update">修改看板信息</el-dropdown-item>
                   <el-dropdown-item @click="deleteKanban">删除该看板</el-dropdown-item>
-                  <el-dropdown-item divided @click="invite">邀请协作</el-dropdown-item>
+                  <el-dropdown-item divided @click="inviteOpen">邀请协作</el-dropdown-item>
+                </el-dropdown-menu>
+                <el-dropdown-menu v-else>
+                  <el-dropdown-item @click="deleteShare($store.state.userInfo.userid)">退出协作</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -64,13 +67,41 @@
       </span>
       </template>
     </el-dialog>
+
+    <el-dialog v-model="invitationVisible" title="协作管理" :append-to-body="true">
+      <el-table :data="memberUser">
+        <el-table-column label="头像" width="70">
+          <template #default="scope">
+            <el-avatar size="small" :src="scope.row.avatar">
+              <span style="font-size: 5px !important;">{{ scope.row.nickname.substring(0, 2) }}</span>
+            </el-avatar>
+          </template>
+        </el-table-column>
+        <el-table-column property="nickname" label="用户昵称" />
+        <el-table-column label="操作" width="100">
+          <template #default="scope">
+            <el-button size="small" type="danger" v-if="scope.row.userid!==$store.state.userInfo.userid"
+                       @click="deleteShare(scope.row.userid)">踢出</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-divider />
+      <span style="font-size: 18px;margin-bottom: 10px;">邀请协作</span>
+      <div style="display: flex;margin-top: 20px;vertical-align: middle;">
+        <span>被邀请人邮箱：</span>
+        <el-input v-model="invitationEmail" autocomplete="off" maxlength="60" style="width: 400px;"/>
+        <el-button type="primary" @click="invite">邀请</el-button>
+      </div>
+
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import {ref} from "vue";
-import {collectReq, deleteKanbanReq, updateKanban} from "@/network/kanban";
-import {ElMessage, ElMessageBox} from "element-plus";
+import {collectReq, deleteKanbanReq, deleteShareReq, kanbanContent, updateKanban} from "@/network/kanban";
+import {ElMessage} from "element-plus";
 import {inviteReq} from "@/network/invitation";
 
 export default {
@@ -108,20 +139,40 @@ export default {
       })
     }
 
-    const invite = () => {
-      ElMessageBox.prompt('请输入被邀请人的邮箱', 'Tip', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern:
-            /^([a-zA-Z0-9]+[_|_|\-|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,6}$/,
-        inputErrorMessage: '邮箱格式错误',
-      }).then(({value}) => {
-        return inviteReq({kanbanId:props.info.kanbanId,invitedUser:value})
-      }).then(()=>{
-        ElMessage.success("邀请成功")
+    const inviteOpen = () => {
+      invitationVisible.value = true;
+      kanbanContent(props.info.kanbanId).then(res => {
+        memberUser.value = res.data.baseInfo.member;
       })
     }
 
+    const email_regex = /^([a-zA-Z0-9]+[_|_|\-|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,6}$/
+
+    const invitationVisible = ref(false);
+
+    const memberUser = ref([]);
+
+    const invitationEmail = ref("");
+
+    const invite = () => {
+      if (email_regex.test(invitationEmail.value)){
+        inviteReq({kanbanId:props.info.kanbanId,invitedUser:invitationEmail.value}).then(()=>{
+          ElMessage.success("邀请成功")
+          invitationEmail.value = "";
+        })
+      }else{
+        ElMessage.error("邮箱格式错误")
+      }
+    }
+
+    const deleteShare = (userid) => {
+      deleteShareReq({kanbanId: props.info.kanbanId, userId: userid}).then(() => {
+        kanbanContent(props.info.kanbanId).then(res => {
+          memberUser.value = res.data.baseInfo.member;
+        })
+        emit('refresh');
+      })
+    }
 
     return {
       shoucang,
@@ -130,7 +181,12 @@ export default {
       update,
       commit,
       deleteKanban,
-      invite
+      inviteOpen,
+      invitationVisible,
+      memberUser,
+      invitationEmail,
+      invite,
+      deleteShare
     }
   }
 }

@@ -1,12 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 const Index = () => import('../views/Index');
 const Home = () => import('../views/Home');
-const User = () => import('../views/user/User');
-const KanbanHome = () => import('../views/kanban/KanbanHome')
-const UserInfoSetting = () => import('../views/user/UserInfoSetting')
-const PasswordSetting = () => import('../views/user/PasswordSetting')
-const EmailSetting = () => import('../views/user/EmailSetting')
-const KanbanContent = ()=> import('../views/kanban/KanbanContent');
+const User = () => import('../views/User');
+const KanbanHome = () => import('../views/KanbanHome')
+const KanbanContent = ()=> import('../views/KanbanContent');
 const Refresh = ()=> import('../components/refresh');
 const Invitation = ()=> import('../views/Invitation');
 
@@ -44,32 +41,9 @@ const routes = [
         path: "/user",
         name: "User",
         component: User,
-        children:[
-          {
-            path: "",
-            name: "UserInfoSetting",
-            component: UserInfoSetting,
-            meta: {
-              title: "闪念卡片-个人设置"
-            }
-          },
-          {
-            path: "password",
-            name: "PasswordSetting",
-            component: PasswordSetting,
-            meta: {
-              title: "闪念卡片-密码设置"
-            }
-          },
-          {
-            path: "email",
-            name: "EmailSetting",
-            component: EmailSetting,
-            meta: {
-              title: "闪念卡片-邮箱设置"
-            }
-          }
-        ]
+        meta: {
+          title: "闪念卡片-个人中心"
+        }
       }
     ]
   },

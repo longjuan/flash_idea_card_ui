@@ -46,3 +46,15 @@ export function kanbanContent(data){
     method: "get"
   })
 }
+
+export function deleteShareReq(data){
+  return request({
+    url: "/api/kanban/share",
+    method: "delete",
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    data: qs.stringify({
+      kanbanId: data.kanbanId,
+      userId: data.userId
+    })
+  })
+}

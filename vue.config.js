@@ -9,11 +9,11 @@ module.exports = defineConfig({
   devServer: {
     proxy: {
       "/api": {
-        target: "https://ficc.zway.top/",
+        target: "http://127.0.0.1:9201",
         changeOrigin: true,
         ws: true,
         pathRewrite: {
-          '^/api': '/api'
+          '^/api': ''
         },
       }
     }

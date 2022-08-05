@@ -9,11 +9,11 @@
       <el-main class="login-el-main">
         <div class="login-main">
           <div class="login-amin-left">
-            <el-image style="height: 100%" :src="cooperationImg" fit="scale-down" />
+            <el-image style="height: 100%;z-index: -999" :src="cooperationImg" fit="scale-down" />
             <h1>高效管理你的想法、工作、生活</h1>
           </div>
           <div class="login-amin-right">
-            <el-card class="card-el">
+            <el-card>
               <el-image :src="userImg" fit="scale-down" />
               <LoginRegister></LoginRegister>
             </el-card>
@@ -27,8 +27,8 @@
 <script>
 import logoImg from '../assets/logo.png'
 import cooperationImg from '../assets/cooperation.svg'
-import LoginRegister from '../components/login_register/LoginRegister'
 import userImg from '../assets/user.svg'
+import LoginRegister from "@/views/LoginRegister";
 export default {
   name: "Index",
   components: {
@@ -78,5 +78,6 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-width: 120px;
 }
 </style>
