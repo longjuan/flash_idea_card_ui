@@ -17,16 +17,52 @@
         <div class="other-kanban">
           <kanban-info v-for="(item) in other" v-bind:key="item.kanbanId" v-bind:info="item" class="kanban-info"
                        @click="$router.push({path:'/kanban/'+item.kanbanId})" @refresh="refresh"/>
+          <el-card style="width: 260px; margin-bottom: 20px;cursor:pointer;" shadow="hover" @click="newKanbanShow=true">
+            <div style="width: 100%;text-align: center;color: #888888;display: flex;flex-direction: column;">
+              <div style="height: 15px;"></div>
+              <span class="iconfont icon-zengjia" style="font-size: 40px;"></span>
+              <div style="height: 5px;"></div>
+              <span style="font-size: 18px;">新建看板</span>
+            </div>
+          </el-card>
         </div>
       </div>
     </div>
+
+    <el-dialog
+        v-model="newKanbanShow"
+        title="新建看板"
+        width="30%"
+        :append-to-body="true"
+    >
+      <el-form>
+        <el-form-item label="看板标题">
+          <el-input v-model="newkanban.title" autocomplete="off" maxlength="60"/>
+        </el-form-item>
+        <el-form-item label="主题颜色">
+          <el-color-picker v-model="newkanban.color" size="large"/>
+        </el-form-item>
+        <el-form-item label="看板类型">
+          <el-select v-model="newkanban.type" placeholder="Select">
+            <el-option label="默认类型" :value="1"/>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button type="primary" @click="commit">确定</el-button>
+      </span>
+      </template>
+    </el-dialog>
+
   </el-scrollbar>
 </template>
 
 <script>
 import KanbanInfo from "@/components/kanban_info/KanbanInfo";
 import {onMounted, ref} from "vue";
-import {allKanban} from "@/network/kanban";
+import {addKanban, allKanban} from "@/network/kanban";
+import router from "@/router";
 
 export default {
   name: "KanbanHome",
@@ -48,11 +84,28 @@ export default {
     }
 
     const loading = ref(true)
+
+    const newKanbanShow = ref(false)
+
+    const newkanban = ref({title: "", color: '#' + Math.random().toString(16).substr(-6), type: 1})
+
+    const commit = () => {
+      addKanban(newkanban.value).then(() => {
+        newKanbanShow.value = false
+        router.push({path: "/home"}).then(() => {
+          router.replace({path: "/refresh"})
+        })
+      })
+    }
+
     return {
       collected,
       other,
       refresh,
-      loading
+      loading,
+      newKanbanShow,
+      newkanban,
+      commit
     }
   }
 }

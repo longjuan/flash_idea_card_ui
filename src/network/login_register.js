@@ -37,10 +37,17 @@ export function registerReq(data) {
   })
 }
 
-export function evaluationReq(data) {
-  return request({
-    url: "/api/user/evaluation",
-    method: "post",
-    data: qs.stringify(data)
+export function resetPasswordReq(data) {
+  return getRsaKey().then(response => {
+    let encryptor = new JSEncrypt()
+    encryptor.setPublicKey("-----BEGIN PUBLIC KEY-----" + response.data.publicKey + "-----END PUBLIC KEY-----")
+    data.password = encryptor.encrypt(data.password)
+    data.rsaUuid = response.data.uuid
+
+    return request({
+      url: "/api/user/password/reset",
+      method: "put",
+      data
+    })
   })
 }

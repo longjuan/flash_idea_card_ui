@@ -1,6 +1,6 @@
 <template>
   <!-- 添加一个 div 用作容器 -->
-  <div id="grecaptcha"></div>
+  <div id="grecaptcha">验证模块加载中，长时间未加载请刷新重试</div>
 </template>
 <script>
 export default {
@@ -24,7 +24,7 @@ export default {
           sitekey: this.sitekey,
           callback: this.submit
         });
-      }, 200);
+      }, 150);
     }
   },
   mounted() {

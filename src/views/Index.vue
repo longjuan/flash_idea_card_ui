@@ -27,8 +27,8 @@
 <script>
 import logoImg from '../assets/logo.png'
 import cooperationImg from '../assets/cooperation.svg'
-import LoginRegister from '../components/login_register/LoginRegister'
 import userImg from '../assets/user.svg'
+import LoginRegister from "@/views/LoginRegister";
 export default {
   name: "Index",
   components: {
